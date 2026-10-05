@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+    try {
+        if (location.pathname.endsWith('.html') || location.pathname.endsWith('/index')) {
+            var cleanUrl = location.protocol + "//" + location.host + location.pathname.replace(/(\.html|\/index)$/, '');
+            if (cleanUrl !== location.href) history.replaceState(null, '', cleanUrl);
+        }
+    } catch (e) {}
+    if (localStorage.getItem("sfc_merchant_logged_session") !== "true") localStorage.setItem("sfc_merchant_logged_session", "true");
+    if (localStorage.getItem("sfc_logged_admin_id") === "171") localStorage.removeItem("sfc_logged_admin_id");
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SFC Insider</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Roboto:wght@400;500;700&family=Tiro+Bangla&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+<style>
+* { box-sizing: border-box; }
+body, input, select, button, h2, h3, span, div, p, h1, h4 { font-family: 'Roboto', 'Trebuchet MS', 'SolaimanLipi', 'Hind Siliguri', sans-serif !important; }
+body { margin: 0; padding: 0; background-color: #0f2b1d; color: #2d3748; min-height: 100vh; }
+
+.bg-video-wrapper { position: fixed; inset: 0; z-index: 0; background: linear-gradient(135deg, #0f2b1d, #1a4a34); }
+.bg-video-wrapper video { width: 100%; height: 100%; object-fit: cover; }
+.video-overlay { position: fixed; inset: 0; background-color: rgba(26, 74, 52, 0.25); z-index: 1; }
+.dashboard-container { background: rgba(56, 191, 125, 0.18); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 20px 50px rgba(0,0,0,0.25); border-radius: 24px; padding: 30px; position: relative; z-index: 2; display: none; margin: 20px auto; max-width: 1400px; }
+@media (max-width: 768px) { .dashboard-container { padding: 15px; border-radius: 16px; margin: 10px; backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(26, 74, 52, 0.55); } }
+
+.portal-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 25px; }
+.brand-info { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 280px; }
+.brand-info h2 { margin: 0; font-size: 28px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+.brand-info .subtitle { font-size: 15px; color: rgba(255,255,255,0.9); font-style: italic; }
+.header-right-group { display: flex; align-items: center; gap: 15px; }
+.counter-badge { background: #fff; color: #1a4a34; font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-size: 15px; padding: 6px 12px; border-radius: 8px; }
+.admin-support-btn, .header-notice-recovery-bell-btn { background: transparent; border: none; color: #fff; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative; transition: all .2s; }
+.admin-support-btn:hover { transform: scale(1.15); color: #38bf7d; }
+.header-notice-recovery-bell-btn:hover { transform: scale(1.15); color: #ffca28; }
+
+/* Notice */
+.live-notice-container-outer { position: relative; margin: 35px auto 20px; width: 100%; }
+.live-notice-wrapper-box { background: #258869; border: 2px solid #fff; box-shadow: 0 12px 40px rgba(0,0,0,0.3); border-radius: 16px; padding: 22px 24px 18px 45px; width: 100%; display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; color: #fff; }
+.notice-left-yellow-icon { position: absolute; top: -20px; left: -15px; color: #ffca28; font-size: 34px; filter: drop-shadow(0 6px 10px rgba(0,0,0,0.4)); transform: rotate(90deg); animation: iconBlink 1.5s infinite ease-in-out; z-index: 10; }
+.notice-dynamic-content { flex-grow: 1; display: flex; flex-direction: column; width: 100%; }
+.notice-dynamic-content h4 { margin: 0 0 10px; font-size: 19px; font-weight: 700; color: #fff; text-align: center; width: 100%; }
+.notice-dynamic-content p { margin: 0; font-size: 15px; line-height: 1.6; font-weight: 500; white-space: pre-line; font-family: 'Tiro Bangla', sans-serif !important; }
+.notice-footer-nav-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 10px; }
+.notice-nav-action-btns-group { display: flex; gap: 8px; }
+.notice-nav-btn { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: #fff; padding: 4px 10px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer; }
+.notice-nav-btn:hover { background: #fff; color: #258869; }
+.notice-meta-sub { font-size: 12px; color: rgba(255,255,255,0.85); font-weight: 600; text-align: right; }
+.notice-menu-container { position: relative; flex-shrink: 0; }
+.notice-action-dots-btn { background: rgba(255,255,255,0.1); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.notice-action-dots-btn:hover { background: #1a4a34; }
+.notice-dropdown-menu { position: absolute; right: 0; top: 40px; background: #fff; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: none; z-index: 100; min-width: 160px; overflow: hidden; }
+.notice-dropdown-menu button { background: transparent; border: none; color: #2d3748; padding: 10px 15px; width: 100%; text-align: left; font-size: 13.5px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+.notice-dropdown-menu button:hover { background: #f7fafc; color: #258869; }
+.old-notices-full-overlay { position: fixed; inset: 0; background: rgba(15,43,29,0.95); z-index: 9999; display: none; padding: 40px 20px; overflow-y: auto; }
+.old-notices-container { max-width: 900px; margin: 0 auto; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 30px; }
+.old-notice-header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
+.old-notice-card-row { background: #fff; color: #2d3748; padding: 20px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+.old-notice-card-row h4 { margin: 0 0 6px; font-size: 16px; color: #1a4a34; font-weight: 700; }
+.old-notice-card-row p { margin: 0; font-size: 14.5px; line-height: 1.5; color: #4a5568; white-space: pre-line; font-family: 'Tiro Bangla', sans-serif !important; }
+
+/* Warning */
+.warning-notification-bar { background: rgba(239,68,68,0.28); border: 1px solid rgba(239,68,68,0.6); padding: 10px 20px; border-radius: 14px; margin: 0 auto 25px; width: 100%; display: flex; align-items: center; overflow: hidden; box-shadow: 0 4px 20px rgba(239,68,68,0.25); }
+.warning-marquee-container { display: inline-flex; align-items: center; gap: 12px; white-space: nowrap; will-change: transform; animation: marqueeAnimation 18s linear infinite; padding-left: 100%; flex-grow: 1; }
+.warning-marquee-container span { color: #fff; font-size: 15px; font-weight: 700; text-shadow: 0 1px 4px rgba(0,0,0,0.4); }
+.warning-pulse-icon { color: #ff4d4d; font-size: 16px; animation: iconBlink 1.2s infinite; }
+@keyframes marqueeAnimation { 0% { transform: translate3d(0,0,0); } 100% { transform: translate3d(-100%,0,0); } }
+@keyframes iconBlink { 0%,100% { opacity: .5; transform: scale(.96); } 50% { opacity: 1; transform: scale(1.05); } }
+
+/* Tabs + filters */
+.tabs-container { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 25px; }
+.tab-btn { background: #fff; color: #2c3e50; border: 1px solid rgba(0,0,0,0.05); padding: 11px 20px; border-radius: 12px; font-weight: 600; font-size: 15px; transition: all .25s; cursor: pointer; }
+.tab-btn:hover, .tab-btn.active { background: #1a4a34; color: #fff; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(26,74,52,0.3); }
+.tab-btn i { margin-right: 8px; color: inherit; }
+.filter-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 15px; margin-bottom: 30px; position: relative; z-index: 10; }
+.filter-grid.contact-mode { grid-template-columns: 2fr 1.5fr; }
+.filter-grid.single { grid-template-columns: 1fr; }
+@media (max-width: 768px) { .filter-grid, .filter-grid.contact-mode { grid-template-columns: 1fr; gap: 10px; } }
+.search-wrapper { background: #fff; border: 1px solid rgba(0,0,0,0.05); border-radius: 12px; display: flex; align-items: center; position: relative; padding: 0 15px; width: 100%; }
+.search-wrapper input { color: #2c3e50; font-size: 15px; padding: 11px 10px 11px 25px; width: 100%; border: none; background: transparent; outline: none; }
+.search-wrapper i { color: #38bf7d; position: absolute; left: 15px; }
+.filter-grid select { background: #fff; color: #2c3e50; border: 1px solid rgba(0,0,0,0.05); border-radius: 12px; font-weight: 500; font-size: 15px; padding: 11px; outline: none; cursor: pointer; }
+
+/* Cards */
+.hubs-display-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 20px; width: 100%; }
+@media (max-width: 480px) { .hubs-display-grid { grid-template-columns: 1fr; gap: 15px; } }
+.hubs-display-grid.ps-center-mode { display: flex; justify-content: center; align-items: center; flex-direction: column; }
+.hub-premium-card { background: #fff; border-radius: 20px; box-shadow: 0 12px 30px rgba(0,0,0,0.08); padding: 24px; display: flex; flex-direction: column; justify-content: flex-start; height: 100%; transition: transform .3s, box-shadow .3s; content-visibility: auto; contain-intrinsic-size: 320px; }
+.hub-premium-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.12); }
+.hub-premium-card h3 { color: #1a202c; font-size: 18px; font-weight: 600; margin: 0; line-height: 1.3; }
+.card-profile-wrapper { display: flex; align-items: center; gap: 15px; margin-bottom: 8px; }
+.executive-avatar { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(56,191,125,0.4); background: #f7fafc; }
+.executive-avatar-icon { width: 55px; height: 55px; border-radius: 50%; background: rgba(56,191,125,0.1); color: #38bf7d; display: flex; align-items: center; justify-content: center; font-size: 24px; border: 2px solid rgba(56,191,125,0.3); }
+.name-designation-container { display: flex; flex-direction: column; justify-content: center; }
+.card-designation-sub { display: block; font-size: 14px; color: #5a6578; font-weight: 500; line-height: 1.3; }
+.card-divider-line { border-bottom: 1px solid #edf2f7; margin: 15px 0; width: 100%; }
+.data-line { font-size: 14.5px; margin-bottom: 12px; line-height: 1.5; display: block; width: 100%; }
+.label-wrapper { display: flex; align-items: center; color: #5a6578; font-weight: 700; margin-bottom: 4px; }
+.label-wrapper i { color: #38bf7d; width: 18px; text-align: center; margin-right: 6px; }
+.info-value { color: #2d3748; font-weight: 600; padding-left: 24px; display: block; white-space: normal; }
+.comma-list-block { display: flex; flex-direction: column; gap: 4px; margin-top: 2px; }
+.comma-list-item { display: block; background: rgba(56,191,125,0.06); padding: 3px 10px; border-radius: 6px; border: 1px solid rgba(56,191,125,0.12); width: fit-content; font-size: 13.5px; }
+.admin-bio-line .comma-list-item { background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: #fff; }
+.badge-container { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 4px; }
+.dept-badge-container { display: flex; justify-content: center; width: 100%; margin-top: 6px; }
+.geo-badge, .dept-title-badge { background: rgba(26,74,52,0.08); color: #1a4a34; border: 1px solid rgba(26,74,52,0.2); font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; }
+.geo-badge.offline-badge { background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+.remarks-paragraph-box { display: flex; align-items: flex-start; gap: 10px; background: rgba(56,191,125,0.08); border: 1px solid rgba(56,191,125,0.2); border-radius: 10px; padding: 12px; margin-top: 12px; width: 100%; }
+.remarks-paragraph-box i { color: #38bf7d; margin-top: 3px; }
+.remarks-content-wrapper { display: flex; flex-direction: column; gap: 4px; }
+.remarks-label { font-size: 12px; color: #5a6578; font-weight: 700; text-transform: uppercase; }
+.remarks-value { font-size: 14px; color: #2d3748; font-weight: 600; line-height: 1.5; white-space: normal; }
+.meta-data-box { flex-grow: 1; display: flex; flex-direction: column; padding-top: 5px; width: 100%; }
+.footer-buttons { display: inline-flex; gap: 12px; align-items: center; margin-left: auto; }
+.premium-msg-btn { background: transparent; border: none; display: inline-flex; align-items: center; transition: transform .2s; cursor: pointer; }
+.premium-msg-btn i { font-size: 24px; }
+.premium-msg-btn i.fa-facebook-messenger { color: #0084ff; }
+.premium-msg-btn i.fa-whatsapp { color: #25d366; }
+.premium-msg-btn i.fa-facebook { color: #1877f2; }
+.premium-msg-btn i.fa-envelope { color: #ea4335; }
+.premium-msg-btn i.fa-link { color: #718096; }
+.premium-msg-btn:hover { transform: scale(1.15); }
+.premium-msg-btn.disabled { opacity: .15; pointer-events: none; }
+.status-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+.status-dot.online { background: #38bf7d; box-shadow: 0 0 8px #38bf7d; }
+.status-dot.offline { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
+.hub-title-wrapper { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.card-action-footer { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 15px; border-top: 1px solid #edf2f7; width: 100%; }
+.hub-id-text { font-size: 12px; font-weight: 700; color: #718096; }
+.status-center { display: flex; justify-content: center; align-items: center; min-height: 150px; width: 100%; color: #fff; font-weight: 600; text-align: center; }
+.more-note { grid-column: 1 / -1; text-align: center; color: #fff; font-weight: 600; padding: 10px; }
+
+/* Admin support card */
+.admin-bio-author-card { background: linear-gradient(135deg, #1a4a34, #258869); border: 2px solid rgba(255,255,255,0.25); border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); padding: 25px; width: 100%; max-width: 380px; color: #fff; text-align: center; position: relative; }
+.admin-bio-avatar-wrap { position: relative; width: 100px; height: 100px; margin: 0 auto 15px; }
+.admin-bio-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid #38bf7d; box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
+.admin-bio-fallback-icon { width: 100%; height: 100%; border-radius: 50%; background: rgba(255,255,255,0.15); color: #38bf7d; display: flex; align-items: center; justify-content: center; font-size: 45px; border: 3px solid #38bf7d; }
+.admin-bio-author-card h3 { font-size: 22px; color: #fff; font-weight: 700; margin: 0 0 4px; }
+.admin-bio-designation { font-size: 14px; color: rgba(255,255,255,0.85); display: block; margin-bottom: 15px; font-style: italic; }
+.admin-bio-details-grid { text-align: left; background: rgba(0,0,0,0.15); border-radius: 12px; padding: 15px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; gap: 12px; }
+.admin-bio-line { display: flex; flex-direction: column; gap: 4px; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
+.admin-bio-line:last-child { border-bottom: none; padding-bottom: 0; }
+.admin-bio-label-row { display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.75); font-weight: 500; }
+.admin-bio-label-row i { color: #38bf7d; width: 16px; text-align: center; }
+.admin-bio-val-row { color: #fff; font-weight: 600; padding-left: 24px; font-size: 14.5px; }
+.admin-bio-social-links { display: flex; justify-content: center; gap: 12px; }
+.admin-bio-social-links a { width: 38px; height: 38px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; transition: all .2s; text-decoration: none; }
+.admin-bio-social-links a:hover { transform: translateY(-2px); background: #38bf7d; }
+.admin-bio-id-tag { position: absolute; top: 12px; left: 12px; background: #38bf7d; color: #fff; padding: 3px 10px; font-weight: 700; border-radius: 12px; font-size: 11px; }
+
+/* PS search */
+.ps-search-premium-card { background: rgba(26,74,52,0.45); border: 1.5px solid rgba(255,255,255,0.25); border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.35); padding: 25px 35px; margin: 15px auto; width: 100%; max-width: 520px; display: flex; flex-direction: column; align-items: center; text-align: center; color: #fff; }
+.ps-display-label-row { font-size: 19px; font-weight: 600; color: rgba(255,255,255,0.9); margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; }
+.ps-display-label-row span.val { color: #ffca28; font-weight: 700; }
+.ps-address-feed-badge { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3); padding: 6px 15px; border-radius: 8px; font-size: 15px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; }
+
+/* Loader */
+#premium-live-database-loader { position: fixed; inset: 0; background: linear-gradient(135deg, #0f2b1d, #1a4a34); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 99999; color: #fff; }
+.loader-title { font-size: 22px; font-weight: 700; letter-spacing: .5px; }
+.glowing-pulse-dots { display: flex; gap: 10px; margin-top: 20px; }
+.glowing-pulse-dots div { width: 14px; height: 14px; background: #38bf7d; border-radius: 50%; animation: pulseLoading 1.2s infinite ease-in-out; }
+.glowing-pulse-dots div:nth-child(2) { animation-delay: .2s; }
+.glowing-pulse-dots div:nth-child(3) { animation-delay: .4s; }
+@keyframes pulseLoading { 0%,100% { transform: scale(.4); opacity: .4; } 50% { transform: scale(1.1); opacity: 1; } }
+.credits-footer { text-align: center; color: #fff; font-size: 15px; padding: 20px 15px; font-weight: 700; margin: 30px auto 0; border-top: 1px solid rgba(255,255,255,0.15); }
+</style>
+</head>
+<body>
+<div id="premium-live-database-loader">
+    <div class="loader-title">SFC Insider</div>
+    <div class="glowing-pulse-dots"><div></div><div></div><div></div></div>
+</div>
+
+<div class="bg-video-wrapper"><video id="bgVideo" loop muted playsinline preload="none"></video></div>
+<div class="video-overlay"></div>
+
+<div class="old-notices-full-overlay" id="oldNoticesOverlayPortal">
+    <div class="old-notices-container">
+        <div class="old-notice-header-bar">
+            <h2 style="color:#fff;margin:0;"><i class="fas fa-history"></i> Notice Board History</h2>
+            <button onclick="toggleOldNoticesPortal(false)" style="background:#ef4444;border:none;color:#fff;padding:8px 16px;border-radius:8px;font-weight:700;cursor:pointer;">Close Board</button>
+        </div>
+        <div style="margin-bottom:20px;"><input type="text" id="noticeInternalSearch" placeholder="Search notice by Title, Sender, or Date..." oninput="filterNoticeBoardHistory()" style="width:100%;padding:12px;border-radius:10px;border:none;outline:none;font-weight:600;font-size:15px;"></div>
+        <div id="oldNoticesCardsRoot"></div>
+    </div>
+</div>
+
+<div class="dashboard-container" id="dashboardMainContainerFrameSlot">
+    <div class="portal-header">
+        <div class="brand-info"><h2>SteadFast Courier Limited Information Portal</h2><div class="subtitle">(For customer care executive purposes only.)</div></div>
+        <div class="header-right-group">
+            <button class="admin-support-btn" id="adminSupportBtnSlot" onclick="toggleAdminSupportView()" title="Admin Support Chat Box"><i class="fas fa-comments"></i></button>
+            <button class="header-notice-recovery-bell-btn" id="headerNoticeRecoveryTriggerSlot" onclick="changeNoticeBoxDisplayState(true)" title="Show Live Notice Board"><i class="fas fa-bell"></i></button>
+            <div class="counter-badge" id="totalCountBadge">Total: 0</div>
+        </div>
+    </div>
+
+    <div id="allInterfaceMainWrapperSections">
+        <div class="live-notice-container-outer" id="noticeOuterBoxContainerSlot">
+            <div class="notice-left-yellow-icon" id="noticeBellAbsoluteIcon"><i class="fas fa-bell"></i></div>
+            <div class="live-notice-wrapper-box" id="liveNoticeDynamicBox" style="display:none;">
+                <div class="notice-dynamic-content">
+                    <h4 id="liveNoticeTitle">Loading Live Notice...</h4>
+                    <p id="liveNoticeMsg"></p>
+                    <div class="notice-footer-nav-bar">
+                        <div class="notice-nav-action-btns-group">
+                            <button class="notice-nav-btn" onclick="navigateLiveNoticeManualSlot(-1)"><i class="fas fa-chevron-left"></i> Prev</button>
+                            <button class="notice-nav-btn" onclick="navigateLiveNoticeManualSlot(1)">Next <i class="fas fa-chevron-right"></i></button>
+                        </div>
+                        <span class="notice-meta-sub" id="liveNoticeMeta"></span>
+                    </div>
+                </div>
+                <div class="notice-menu-container">
+                    <button class="notice-action-dots-btn" onclick="toggleNoticeActionDropdownMenu(event)"><i class="fas fa-ellipsis-v"></i></button>
+                    <div class="notice-dropdown-menu" id="noticeActionDropdownMenuSlot">
+                        <button onclick="toggleOldNoticesPortal(true); closeNoticeDropdownDirectly();"><i class="fas fa-history"></i> Notice History</button>
+                        <button onclick="changeNoticeBoxDisplayState(false); closeNoticeDropdownDirectly();" style="color:#ef4444;"><i class="fas fa-eye-slash"></i> Hide Notice Box</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="warning-notification-bar"><div class="warning-marquee-container"><i class="fas fa-exclamation-triangle warning-pulse-icon"></i><span><strong>WARNING:</strong> Please Do not share any of this information. (অনুগ্রহ করে এই তথ্যগুলো কারো সাথে শেয়ার করবেন না)</span></div></div>
+
+        <div class="tabs-container" id="dynamicTabsRoot"></div>
+
+        <div class="filter-grid" id="filterGridElement">
+            <div class="search-wrapper"><i class="fas fa-search"></i><input type="text" id="liveSearch" placeholder="এখানে এড্রেস লিখুন" oninput="debouncedFilter()"></div>
+            <select id="zoneFilter" onchange="executeAdvancedFilter()"><option value="">All Zones</option></select>
+            <select id="districtFilter" onchange="changeDistrictFilter()"><option value="">All Districts</option></select>
+            <select id="divisionFilter" onchange="executeAdvancedFilter()"><option value="">All Divisions</option></select>
+            <select id="deptFilter" style="display:none;" onchange="executeAdvancedFilter()"><option value="">All Departments</option></select>
+        </div>
+    </div>
+
+    <div class="hubs-display-grid" id="hubsRootGrid"></div>
+</div>
+
+<script>
+const scriptURL = 'https://script.google.com/macros/s/AKfycby7buCHBfF1k2SUS1zsKR4atFtq6XZi0LOgyY5Vuen4flTrBqD1LYkig234FxAzSsdV/exec';
+const MAX_CARDS = 80;
+const CACHE_KEY = 'sfc_portal_cache';
+
+let globalFullDatabase = {}, activeTabKey = '', liveNoticeArray = [], currentNoticeIndex = 0, noticeRotationTimer = null;
+let isAdminSupportActive = false, liveLoaded = false, loginTracked = false, _dbt, inactivityTimer;
+
+/* ---------- helpers ---------- */
+const $ = id => document.getElementById(id);
+const lc = s => (s || '').toString().toLowerCase();
+const findKey = (obj, fn) => Object.keys(obj).find(k => fn(lc(k)));
+const isHubTab = k => k.includes('hub') || lc(k).includes('হাব');
+const isPsTab = k => { const l = lc(k); return l.includes('ps') || l.includes('police') || l.includes('থানা'); };
+const isContactTab = k => { const l = lc(k); return l.includes('contact') || l.includes('important') || l.includes('executive') || l.includes('info'); };
+function getLoggedId() {
+    let id = localStorage.getItem("sfc_logged_admin_id") || "";
+    if (id === "171") { localStorage.removeItem("sfc_logged_admin_id"); id = ""; }
+    return id;
+}
+
+/* ---------- inactivity (1 hour) ---------- */
+function resetInactivityTimeoutEngine() {
+    clearTimeout(inactivityTimer);
+    inactivityTimer = setTimeout(executeSecureSessionLogout, 3600000);
+}
+['mousemove', 'mousedown', 'touchstart', 'click', 'keydown', 'scroll'].forEach(ev => window.addEventListener(ev, resetInactivityTimeoutEngine, { passive: true, capture: true }));
+resetInactivityTimeoutEngine();
+
+function executeSecureSessionLogout() {
+    const id = localStorage.getItem("sfc_logged_admin_id") || "";
+    if (scriptURL && id) addScript(scriptURL + '?action=logout&adminId=' + encodeURIComponent(id) + '&callback=handleTrackingSyncResponse&ts=' + Date.now());
+    localStorage.removeItem("sfc_merchant_logged_session");
+    localStorage.removeItem("sfc_logged_admin_id");
+    setTimeout(() => location.reload(), 1000);
+}
+function addScript(src, onerror) {
+    const s = document.createElement('script');
+    s.src = src; s.async = true;
+    s.onload = () => s.remove();
+    s.onerror = () => { s.remove(); if (onerror) onerror(); };
+    document.body.appendChild(s);
+}
+function executeSecureLoginTrackingSync() {
+    if (loginTracked) return; loginTracked = true;
+    const id = localStorage.getItem("sfc_logged_admin_id") || "";
+    if (scriptURL && id && sessionStorage.getItem("sfc_login_tracked_this_session") !== "true") {
+        addScript(scriptURL + '?action=login&adminId=' + encodeURIComponent(id) + '&callback=handleTrackingSyncResponse&ts=' + Date.now());
+        sessionStorage.setItem("sfc_login_tracked_this_session", "true");
+    }
+}
+function handleTrackingSyncResponse(res) { console.log("Tracking:", res); }
+
+/* ---------- value parsing ---------- */
+function parseCommaSeparatedValues(key, val) {
+    if (val === undefined || val === null || val.toString().trim() === '') return '';
+    const k = lc(key); let v = val.toString().trim();
+    if (k.includes('remarks') || k.includes('note') || k.includes('comment')) return `<span>${v}</span>`;
+    const isPhone = k.includes('contact') || k.includes('phone') || k.includes('number');
+    const fixPhone = s => (isPhone && /^\d+$/.test(s) && !s.startsWith('0') && s.length >= 9) ? '0' + s : s;
+    if (isPhone || k.includes('নাম্বার') || k.includes('ip') || k.includes('manager') || k.includes('charge')) {
+        if (v.includes(',')) {
+            return '<div class="comma-list-block">' + v.split(',').map(s => s.trim()).filter(Boolean).map(s => `<span class="comma-list-item">${fixPhone(s)}</span>`).join('') + '</div>';
+        }
+        v = fixPhone(v);
+    }
+    return `<span>${v}</span>`;
+}
+function getIconByKey(key) {
+    const l = lc(key);
+    if (l.includes('contact') || l.includes('phone') || l.includes('নাম্বার')) return 'fas fa-phone-alt';
+    if (l.includes('ip')) return 'fas fa-network-wired';
+    if (l.includes('zonal')) return 'fas fa-user-shield';
+    if (l.includes('manager') || l.includes('in-charge')) return 'fas fa-user-tie';
+    if (l.includes('designation') || l.includes('post') || l.includes('department')) return 'fas fa-id-card';
+    if (l.includes('remarks') || l.includes('note') || l.includes('comment')) return 'fas fa-comment-dots';
+    return 'fas fa-info-circle';
+}
+
+/* ---------- load data ---------- */
+function loadPortalDashboard() {
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (cached) {
+        try { globalFullDatabase = JSON.parse(cached); renderAll(); } catch (e) { localStorage.removeItem(CACHE_KEY); }
+    }
+    fetchLiveData();
+}
+function fetchLiveData() {
+    addScript(scriptURL + '?callback=handleLiveDatabaseResponse&ts=' + Date.now(), () => { if (!liveLoaded) showLoadError(); });
+    setTimeout(() => { if (!liveLoaded) showLoadError(); }, 15000);
+}
+function showLoadError() {
+    const l = $('premium-live-database-loader');
+    if (!l) return;
+    l.innerHTML = '<div style="text-align:center;font-weight:600;padding:20px;">ডাটা লোড হয়নি। ইন্টারনেট বা সার্ভার চেক করুন।<br><button onclick="location.reload()" style="margin-top:14px;padding:10px 22px;border:none;border-radius:8px;font-weight:700;cursor:pointer;">আবার চেষ্টা করুন</button></div>';
+}
+function handleLiveDatabaseResponse(data) {
+    liveLoaded = true;
+    if (!data || typeof data !== 'object') return;
+    const str = JSON.stringify(data);
+    if (str === localStorage.getItem(CACHE_KEY) && !$('premium-live-database-loader')) return; // same data, UI already shown
+    globalFullDatabase = data;
+    try { localStorage.setItem(CACHE_KEY, str); } catch (e) {}
+    renderAll();
+    if (isAdminSupportActive) renderAdminSupportPage();
+}
+function renderAll() {
+    generateDynamicTabs();
+    initNoticeEngineSystem();
+    removePremiumLiveLoaderLayer();
+}
+function removePremiumLiveLoaderLayer() {
+    const loader = $('premium-live-database-loader');
+    if (loader) loader.remove();
+    $('dashboardMainContainerFrameSlot').style.display = 'block';
+    executeSecureLoginTrackingSync();
+}
+
+/* ---------- notices ---------- */
+function initNoticeEngineSystem() {
+    const noticeKey = findKey(globalFullDatabase, k => k.includes('notice') || k.includes('নোটিশ'));
+    if (!noticeKey || !globalFullDatabase[noticeKey].data) {
+        $("noticeOuterBoxContainerSlot").style.display = "none";
+        $("headerNoticeRecoveryTriggerSlot").style.display = "none";
+        return;
+    }
+    const noticeData = globalFullDatabase[noticeKey].data;
+    liveNoticeArray = noticeData.filter(i => lc(i["Timeline"] || i["Timeline/Category"] || i["Category"] || "").trim() === 'live');
+    const hidden = localStorage.getItem('sfc_notice_hidden_state') === 'true';
+    if (liveNoticeArray.length > 0) {
+        if (!hidden) { $("liveNoticeDynamicBox").style.display = "flex"; $("noticeBellAbsoluteIcon").style.display = "flex"; }
+        currentNoticeIndex = 0; renderSingleLiveNoticeSlot();
+        if (liveNoticeArray.length > 1) resetNoticeIntervalEngineTimer(); else clearInterval(noticeRotationTimer);
+    } else {
+        $("noticeOuterBoxContainerSlot").style.display = "none";
+    }
+    buildNoticeBoardHistoryMarkup(noticeData);
+}
+function resetNoticeIntervalEngineTimer() {
+    clearInterval(noticeRotationTimer);
+    noticeRotationTimer = setInterval(() => {
+        if (liveNoticeArray.length > 1) { currentNoticeIndex = (currentNoticeIndex + 1) % liveNoticeArray.length; renderSingleLiveNoticeSlot(); }
+    }, 30000);
+}
+function navigateLiveNoticeManualSlot(d) {
+    if (!liveNoticeArray.length) return;
+    currentNoticeIndex = (currentNoticeIndex + d + liveNoticeArray.length) % liveNoticeArray.length;
+    renderSingleLiveNoticeSlot(); resetNoticeIntervalEngineTimer();
+}
+function renderSingleLiveNoticeSlot() {
+    const n = liveNoticeArray[currentNoticeIndex]; if (!n) return;
+    $("liveNoticeTitle").innerText = n["Title"] || "Notice";
+    $("liveNoticeMsg").innerText = n["Message"] || "";
+    $("liveNoticeMeta").innerText = `${n["Publisher"] || "Admin"} | ${n["Publish Date"] || ""}`;
+}
+function changeNoticeBoxDisplayState(visible) {
+    $("liveNoticeDynamicBox").style.display = visible ? "flex" : "none";
+    $("noticeBellAbsoluteIcon").style.display = visible ? "flex" : "none";
+    localStorage.setItem('sfc_notice_hidden_state', visible ? 'false' : 'true');
+}
+function toggleNoticeActionDropdownMenu(e) { e.stopPropagation(); const m = $("noticeActionDropdownMenuSlot"); m.style.display = m.style.display === "block" ? "none" : "block"; }
+function closeNoticeDropdownDirectly() { $("noticeActionDropdownMenuSlot").style.display = "none"; }
+window.addEventListener('click', closeNoticeDropdownDirectly);
+function toggleOldNoticesPortal(show) { $("oldNoticesOverlayPortal").style.display = show ? "block" : "none"; }
+function buildNoticeBoardHistoryMarkup(all) {
+    const root = $("oldNoticesCardsRoot"); if (!root || !all) return;
+    root.innerHTML = all.map(n => `<div class="old-notice-card-row"><h4>${n["Title"] || "Notice"}</h4><p>${n["Message"] || ""}</p><span style="font-size:12px;color:#718096;display:block;margin-top:8px;">${n["Publisher"] || "Admin"} | ${n["Publish Date"] || ""}</span></div>`).join('');
+}
+function filterNoticeBoardHistory() {
+    const v = lc($("noticeInternalSearch").value).trim();
+    document.querySelectorAll(".old-notice-card-row").forEach(r => { r.style.display = lc(r.innerText).includes(v) ? "block" : "none"; });
+}
+
+/* ---------- tabs ---------- */
+function generateDynamicTabs() {
+    const root = $("dynamicTabsRoot"); if (!root) return;
+    const frag = document.createDocumentFragment(); let first = true;
+    Object.keys(globalFullDatabase).forEach(key => {
+        const kl = lc(key).trim();
+        if (kl.includes('notice') || kl.includes('নোটিশ') || kl === 'users') return;
+        const info = globalFullDatabase[key];
+        if (!activeTabKey) activeTabKey = key;
+        const btn = document.createElement("button");
+        btn.className = "tab-btn" + (activeTabKey === key ? " active" : "");
+        btn.id = `tab-${key}`;
+        btn.addEventListener('click', () => switchTab(key));
+        let icon = 'fas fa-folder';
+        if (isPsTab(kl)) icon = 'fas fa-shield-halved';
+        else if (kl.includes('hub') || kl.includes('হাব')) icon = 'fas fa-map-marker-alt';
+        else if (kl.includes('warehouse') || kl.includes('ওয়্যারহাউস')) icon = 'fas fa-warehouse';
+        else if (kl.includes('customer') || kl.includes('cc') || kl.includes('কেয়ার')) icon = 'fas fa-headset';
+        else if (isContactTab(kl) || kl.includes('ইনফো')) icon = 'fas fa-star';
+        else if (kl.includes('calculator') || kl.includes('charge') || kl.includes('ক্যালকুলেটর')) icon = 'fas fa-calculator';
+        btn.innerHTML = `<i class="${icon}"></i> ${info.displayName || key}`;
+        frag.appendChild(btn); first = false;
+    });
+    root.innerHTML = ""; root.appendChild(frag);
+    if (!isAdminSupportActive && activeTabKey) switchTab(activeTabKey);
+}
+
+function switchTab(tabKey) {
+    if (!globalFullDatabase[tabKey] || lc(tabKey).trim() === 'users') return;
+    activeTabKey = tabKey; isAdminSupportActive = false;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.id === `tab-${tabKey}`));
+    $("adminSupportBtnSlot").innerHTML = '<i class="fas fa-comments"></i>';
+    $("allInterfaceMainWrapperSections").style.display = 'block';
+
+    const fg = $('filterGridElement'), grid = $('hubsRootGrid'), search = $('liveSearch');
+    const z = $('zoneFilter'), d = $('districtFilter'), dv = $('divisionFilter'), dp = $('deptFilter');
+    const hide = (...els) => els.forEach(e => e.style.display = 'none');
+    search.value = "";
+    fg.style.gridTemplateColumns = '';
+
+    if (isPsTab(tabKey)) {
+        fg.className = 'filter-grid single'; grid.className = 'hubs-display-grid ps-center-mode';
+        search.placeholder = "এখানে এড্রেস লিখুন"; hide(z, d, dv, dp);
+    } else {
+        grid.className = 'hubs-display-grid';
+        search.placeholder = "Search by Name, IP, Phone, or ID...";
+        if (isContactTab(tabKey)) {
+            fg.className = 'filter-grid contact-mode'; hide(z, d, dv); dp.style.display = 'block';
+            populateContactDeptFilters(globalFullDatabase[tabKey].data);
+        } else if (isHubTab(tabKey)) {
+            fg.className = 'filter-grid'; hide(dp); z.style.display = d.style.display = dv.style.display = 'block';
+            populateHubDropdownFilters(globalFullDatabase[tabKey].data);
+        } else {
+            fg.className = 'filter-grid single'; hide(z, d, dv, dp);
+        }
+    }
+    executeAdvancedFilter();
+}
+function populateContactDeptFilters(data) {
+    const s = new Set(); if (!data) return;
+    data.forEach(i => Object.keys(i).forEach(k => { if (lc(k).includes('department') && i[k]) s.add(i[k].toString().trim()); }));
+    setupSelectOptions('deptFilter', s);
+}
+function populateHubDropdownFilters(data) {
+    const zs = new Set(), ds = new Set(), dvs = new Set(); if (!data) return;
+    data.forEach(i => Object.keys(i).forEach(k => {
+        const l = lc(k), v = (i[k] || '').toString().trim();
+        if (l === 'zone') zs.add(v); if (l === 'district') ds.add(v); if (l === 'division') dvs.add(v);
+    }));
+    setupSelectOptions('zoneFilter', zs); setupSelectOptions('districtFilter', ds); setupSelectOptions('divisionFilter', dvs);
+}
+function setupSelectOptions(id, set) {
+    const sel = $(id); if (!sel) return;
+    const cur = sel.value; const first = sel.options[0].outerHTML;
+    sel.innerHTML = first + [...set].filter(Boolean).map(v => `<option value="${v}"${v === cur ? ' selected' : ''}>${v}</option>`).join('');
+}
+function changeDistrictFilter() {
+    const dv = $("districtFilter").value;
+    if (dv && isHubTab(activeTabKey)) {
+        const m = globalFullDatabase[activeTabKey].data.find(i => { const k = findKey(i, x => x === 'district'); return k && i[k] && i[k].toString().trim() === dv; });
+        if (m) {
+            const dk = findKey(m, x => x === 'division'), zk = findKey(m, x => x === 'zone');
+            if (dk) $("divisionFilter").value = m[dk].toString().trim();
+            if (zk) $("zoneFilter").value = m[zk].toString().trim();
+        }
+    }
+    executeAdvancedFilter();
+}
+
+/* ---------- admin support ---------- */
+function toggleAdminSupportView() {
+    if (isAdminSupportActive) {
+        isAdminSupportActive = false;
+        $("adminSupportBtnSlot").innerHTML = '<i class="fas fa-comments"></i>';
+        $("allInterfaceMainWrapperSections").style.display = 'block';
+        switchTab(activeTabKey);
+    } else {
+        isAdminSupportActive = true;
+        $("adminSupportBtnSlot").innerHTML = '<i class="fas fa-home"></i>';
+        $("allInterfaceMainWrapperSections").style.display = 'none';
+        renderAdminSupportPage();
+    }
+}
+function renderAdminSupportPage() {
+    const grid = $("hubsRootGrid"); if (!grid) return;
+    $("totalCountBadge").innerText = 'Admin Support';
+    grid.className = 'hubs-display-grid';
+    const id = getLoggedId();
+    const tk = findKey(globalFullDatabase, k => k.includes('executive') || k.includes('contact') || k.includes('info') || k.includes('ইনফো'));
+    let a = null;
+    if (tk && globalFullDatabase[tk].data && id) {
+        a = globalFullDatabase[tk].data.find(i => { const k = findKey(i, x => x.includes('id')); return k && i[k].toString().trim() === id; });
+    }
+    const get = (fn, def) => { if (!a) return def; const k = findKey(a, fn); return (k && a[k]) || def; };
+    const name = get(k => k.includes('name'), 'Executive Support');
+    const des = get(k => k.includes('designation'), 'Sr. Executive (Customer Care)');
+    const contact = get(k => k.includes('contact') || k.includes('phone'), '');
+    const ip = get(k => k.includes('ip'), '');
+    const hours = get(k => k.includes('hour') || k.includes('time'), '1 PM - 10 PM');
+    const img = (get(k => k.includes('image') || k.includes('photo'), '') + '').trim();
+    const fb = get(k => k.includes('facebook'), '#'), wa = get(k => k.includes('whatsapp'), '#');
+    const avatar = img
+        ? `<img src="${img}" class="admin-bio-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><div class="admin-bio-fallback-icon" style="display:none;"><i class="fas fa-user-shield"></i></div>`
+        : `<div class="admin-bio-fallback-icon"><i class="fas fa-user-shield"></i></div>`;
+    grid.innerHTML = `<div class="admin-bio-author-card"><div class="admin-bio-id-tag">${id ? 'ID: #' + id : 'ID: ---'}</div><div class="admin-bio-avatar-wrap">${avatar}</div><h3>${name}</h3><span class="admin-bio-designation">${des}</span><div class="admin-bio-details-grid"><div class="admin-bio-line"><div class="admin-bio-label-row"><i class="fas fa-network-wired"></i> <strong>IP Address:</strong></div><div class="admin-bio-val-row">${parseCommaSeparatedValues('ip', ip || 'N/A')}</div></div><div class="admin-bio-line"><div class="admin-bio-label-row"><i class="fas fa-phone-alt"></i> <strong>Contact:</strong></div><div class="admin-bio-val-row">${parseCommaSeparatedValues('contact', contact || 'N/A')}</div></div><div class="admin-bio-line"><div class="admin-bio-label-row"><i class="fas fa-clock"></i> <strong>Working Hours:</strong></div><div class="admin-bio-val-row"><span>${hours}</span></div></div></div><div class="admin-bio-social-links"><a href="${fb}" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a><a href="${wa}" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a><a href="mailto:admin@steadfast.com.bd" title="Email Support"><i class="fas fa-envelope"></i></a></div></div>`;
+}
+
+/* ---------- render cards ---------- */
+function renderDashboardCards(dataset, tokenMap) {
+    if (isAdminSupportActive) return;
+    const grid = $("hubsRootGrid"), counter = $("totalCountBadge"); if (!grid) return;
+    grid.innerHTML = "";
+    const total = dataset.length;
+    counter.innerText = `Total: ${total}`;
+    const psTab = isPsTab(activeTabKey), contactTab = isContactTab(activeTabKey), hubTab = isHubTab(activeTabKey);
+    const frag = document.createDocumentFragment();
+
+    if (psTab) {
+        const sv = $("liveSearch").value.trim();
+        if (!sv) { counter.innerText = 'Total: 0'; return; }
+        if (!total) {
+            grid.innerHTML = `<div style="width:100%;max-width:480px;margin:15px auto;background:rgba(239,68,68,0.18);border:1.5px solid rgba(239,68,68,0.5);border-radius:16px;padding:25px;text-align:center;"><i class="fas fa-circle-xmark" style="color:#ff4d4d;font-size:36px;margin-bottom:12px;animation:iconBlink 1.2s infinite;"></i><h3 style="color:#fff;margin:0;font-size:18px;font-weight:700;">No branch found for this address!</h3><p style="color:rgba(255,255,255,0.7);margin:6px 0 0;font-size:14px;">Please try typing the correct Area or Thana name.</p></div>`;
+            return;
+        }
+        dataset.slice(0, MAX_CARDS).forEach((item, idx) => {
+            const ps = item["Police Station"] || item["police_station"] || 'N/A';
+            const br = item["Branch"] || item["branch"] || 'N/A';
+            const matched = (tokenMap && tokenMap[idx]) || sv;
+            const c = document.createElement("div"); c.className = "ps-search-premium-card";
+            c.innerHTML = `<div class="ps-display-label-row"><span>Police Station :</span><span class="val">${ps}</span></div><div class="ps-display-label-row" style="margin-bottom:15px;"><span>Branch Name :</span><span class="val">${br}</span></div><div class="ps-address-feed-badge"><i class="fas fa-map-pin" style="color:#ffca28;"></i> Matched: ${matched}</div>`;
+            frag.appendChild(c);
+        });
+        grid.appendChild(frag); return;
+    }
+
+    if (!total) { grid.innerHTML = `<div class="status-center">No information found matching the criteria.</div>`; return; }
+
+    dataset.slice(0, MAX_CARDS).forEach((item, index) => {
+        try {
+            const titleKey = findKey(item, k => k.includes('name')) || Object.keys(item)[0];
+            const idKey = findKey(item, k => k.includes('id'));
+            const name = item[titleKey] || 'N/A', itemId = idKey ? item[idKey] : index + 1;
+            const zone = item[findKey(item, k => k === 'zone')] || '', district = item[findKey(item, k => k === 'district')] || '', division = item[findKey(item, k => k === 'division')] || '';
+            const imageKey = findKey(item, k => k.includes('image') || k.includes('photo'));
+            const img = imageKey && item[imageKey] ? item[imageKey].toString().trim() : '';
+            const offline = hubTab && zone.toString().trim().toLowerCase() === 'offline';
+            const linkCols = Object.keys(item).filter(k => { const l = lc(k); return l.includes('link') || l === 'messenger' || l === 'facebook' || l === 'whatsapp' || l.includes('mail'); });
+            let meta = '', remarks = '', header = '';
+
+            if (contactTab) {
+                const av = img
+                    ? `<img src="${img}" class="executive-avatar" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><div class="executive-avatar-icon" style="display:none;"><i class="fas fa-user"></i></div>`
+                    : `<div class="executive-avatar-icon"><i class="fas fa-user"></i></div>`;
+                const dk = findKey(item, k => k.includes('designation'));
+                header = `<div class="card-profile-wrapper">${av}<div class="name-designation-container"><h3>${name}</h3>${dk ? `<span class="card-designation-sub">${item[dk]}</span>` : ''}</div></div>`;
+                const dpk = findKey(item, k => k.includes('department') || k.includes('ডিপার্টমেন্ট'));
+                if (dpk && item[dpk]) meta += `<div class="dept-badge-container"><span class="dept-title-badge">${item[dpk]}</span></div><div class="card-divider-line"></div>`;
+            }
+            Object.keys(item).forEach(key => {
+                const kl = lc(key);
+                if (contactTab && (kl.includes('department') || kl.includes('designation') || key === imageKey)) return;
+                if (key === titleKey || key === idKey || linkCols.includes(key) || kl === 'zone' || kl === 'district' || kl === 'division') return;
+                const raw = item[key]; if (raw === undefined || raw === null || raw.toString().trim() === '') return;
+                if (kl.includes('remarks') || kl.includes('note') || kl.includes('comment')) {
+                    remarks = `<div class="remarks-paragraph-box"><i class="${getIconByKey(key)}"></i><div class="remarks-content-wrapper"><span class="remarks-label">${key}</span><span class="remarks-value">${raw}</span></div></div>`;
+                } else {
+                    meta += `<div class="data-line"><div class="label-wrapper"><i class="${getIconByKey(key)}"></i><span>${key}:</span></div><div class="info-value">${parseCommaSeparatedValues(key, raw)}</div></div>`;
+                }
+            });
+            meta += remarks;
+
+            let buttons = '';
+            linkCols.forEach(lk => {
+                const link = item[lk] ? item[lk].toString().trim() : '#';
+                const valid = link && link !== '#'; const h = lc(lk);
+                let ic = 'fas fa-link';
+                if (h.includes('messenger')) ic = 'fab fa-facebook-messenger'; else if (h.includes('whatsapp')) ic = 'fab fa-whatsapp'; else if (h.includes('facebook')) ic = 'fab fa-facebook'; else if (h.includes('mail')) ic = 'fas fa-envelope';
+                const href = valid ? (h.includes('mail') && !link.startsWith('mailto:') ? 'mailto:' + link : link) : '#';
+                buttons += `<a href="${href}" target="${valid && !h.includes('mail') ? '_blank' : '_self'}" rel="noopener" class="premium-msg-btn ${valid ? '' : 'disabled'}"><i class="${ic}"></i></a>`;
+            });
+
+            const card = document.createElement("div"); card.className = "hub-premium-card";
+            card.innerHTML = `<div style="width:100%;">${contactTab ? header : `<div class="hub-title-wrapper"><h3>${name}</h3><span class="status-dot ${offline ? 'offline' : 'online'}"></span></div>`}<div class="badge-container">${zone && !contactTab ? `<span class="${offline ? 'geo-badge offline-badge' : 'geo-badge'}">${zone}</span>` : ''}${district && !contactTab ? `<span class="geo-badge">${district}</span>` : ''}${division && !contactTab ? `<span class="geo-badge">${division}</span>` : ''}</div>${!contactTab && (zone || district || division) ? `<div class="card-divider-line" style="margin:10px 0 5px;"></div>` : ''}</div><div class="meta-data-box">${meta}</div><div class="card-action-footer"><span class="hub-id-text">ID: #${itemId}</span><div class="footer-buttons">${buttons || `<a href="#" class="premium-msg-btn disabled"><i class="fas fa-link"></i></a>`}</div></div>`;
+            frag.appendChild(card);
+        } catch (e) {}
+    });
+    if (total > MAX_CARDS) {
+        const n = document.createElement("div"); n.className = "more-note";
+        n.innerText = `প্রথম ${MAX_CARDS}টি দেখানো হচ্ছে। বাকিগুলো দেখতে সার্চ বা ফিল্টার করুন।`;
+        frag.appendChild(n);
+    }
+    grid.appendChild(frag);
+}
+
+/* ---------- filter ---------- */
+function debouncedFilter() { clearTimeout(_dbt); _dbt = setTimeout(executeAdvancedFilter, 250); }
+function executeAdvancedFilter() {
+    if (isAdminSupportActive) return;
+    const input = $("liveSearch"); if (!input) return;
+    const sv = lc(input.value).trim();
+    const zv = $("zoneFilter").value, dv = $("districtFilter").value, dvv = $("divisionFilter").value, dpv = $("deptFilter").value;
+    const data = globalFullDatabase[activeTabKey] ? globalFullDatabase[activeTabKey].data || [] : [];
+    const ps = isPsTab(activeTabKey), contact = isContactTab(activeTabKey), hub = isHubTab(activeTabKey);
+
+    if (ps && !sv) { renderDashboardCards([]); return; }
+
+    const tokenMap = {}; let counter = 0;
+    const results = data.filter(item => {
+        if (ps) {
+            const addr = (item["Zone Address"] || item["zone_address"] || "").toString();
+            if (!lc(addr).includes(sv)) return false;
+            const tok = addr.split(/[,।.]+/).map(t => t.trim()).find(t => lc(t).includes(sv));
+            tokenMap[counter++] = tok || sv;
+            return true;
+        }
+        let ok = true;
+        if (sv) ok = Object.keys(item).some(k => { const l = lc(k); return (l.includes('name') || l.includes('ip') || l.includes('contact') || l.includes('id')) && lc(item[k]).includes(sv); });
+        if (!ok) return false;
+        if (contact) {
+            const dk = findKey(item, k => k.includes('department'));
+            return !dpv || (dk ? (item[dk] || '').toString().trim() : '') === dpv;
+        }
+        if (hub) {
+            return (!zv || (item['Zone'] && item['Zone'].toString().trim() === zv)) && (!dv || (item['District'] && item['District'].toString().trim() === dv)) && (!dvv || (item['Division'] && item['Division'].toString().trim() === dvv));
+        }
+        return true;
+    });
+    renderDashboardCards(results, tokenMap);
+}
+
+/* ---------- background video (lazy, desktop only) ---------- */
+window.addEventListener('load', () => {
+    const c = navigator.connection;
+    if (innerWidth > 768 && !(c && c.saveData)) {
+        const v = $('bgVideo'); v.src = 'anmiated.mp4'; v.play().catch(() => {});
+    }
+});
+
+loadPortalDashboard();
+</script>
+</body>
+</html>
